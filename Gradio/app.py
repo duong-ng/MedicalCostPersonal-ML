@@ -22,8 +22,8 @@ with gr.Blocks() as demo:
     )
 def predict(age, sex, bmi, children, smoker, region):
     # load the model and preprocessor
-    model = '.\model\linearmodel.pkl'
-    preprocessor = ".\preprocessor\preprocessor.pkl"
+    model = 'D:\VietAI_FinalAssignment\model\linearmodel.pkl'
+    preprocessor = "D:\VietAI_FinalAssignment\preprocessor\preprocessor.pkl"
     if not os.path.exists(model) or not os.path.exists(preprocessor):
         raise FileNotFoundError("Model or preprocessor file not found.")
     model = joblib.load(model)
