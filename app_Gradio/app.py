@@ -8,7 +8,7 @@ with gr.Blocks() as demo:
     age = gr.Slider(minimum=0, maximum=100, step=1, label="Age")
     sex = gr.Radio(
         choices=["female", "male"],
-        label='Select an option'
+        label='Select an option'    
     )
     bmi = gr.Textbox(label="BMI")
     children = gr.Textbox(label="Number of children")
@@ -22,7 +22,7 @@ with gr.Blocks() as demo:
     )
 def predict(age, sex, bmi, children, smoker, region):
     # load the model and preprocessor
-    model = 'D:\VietAI_FinalAssignment\model\linearmodel.pkl'
+    model = 'D:\VietAI_FinalAssignment\model\xgbmodel.pkl'
     preprocessor = "D:\VietAI_FinalAssignment\preprocessor\preprocessor.pkl"
     if not os.path.exists(model) or not os.path.exists(preprocessor):
         raise FileNotFoundError("Model or preprocessor file not found.")
@@ -45,4 +45,4 @@ def predict(age, sex, bmi, children, smoker, region):
     
 
 demo = gr.Interface(fn=predict, inputs=[age, sex, bmi, children, smoker, region], outputs="text")       
-demo.launch(share=True)
+demo.launch(share=True, live=True, show_api=True)
