@@ -3,6 +3,7 @@ import pickle, os, joblib
 import numpy as np
 import pandas as pd
 import dill
+import xgboost
 
 with gr.Blocks() as demo:
     age = gr.Slider(minimum=0, maximum=100, step=1, label="Age")
@@ -20,10 +21,17 @@ with gr.Blocks() as demo:
         choices=["northeast", "northwest", "southeast", "southwest"],
         label='Choose a region'
     )
+
+def feature_engineering(X):
+    X = X.copy()
+    X['age_bmi'] = X['age'] * X['bmi']
+    X['age_smoker'] = X['age'] * X['smoker'].map({'yes': 1, 'no': 0})
+    X['is_senior'] = (X['age'] >= 60).apply(lambda x: 1 if x >= 60 else 0)
+    return X
 def predict(age, sex, bmi, children, smoker, region):
     # load the model and preprocessor
-    model = 'D:\VietAI_FinalAssignment\model\xgbmodel.pkl'
-    preprocessor = "D:\VietAI_FinalAssignment\preprocessor\preprocessor.pkl"
+    model = r'D:\VietAI_FinalAssignment\model\xgbmodel.pkl'
+    preprocessor = r"D:\VietAI_FinalAssignment\preprocessor\preprocessor1.pkl"
     if not os.path.exists(model) or not os.path.exists(preprocessor):
         raise FileNotFoundError("Model or preprocessor file not found.")
     model = joblib.load(model)
@@ -37,6 +45,8 @@ def predict(age, sex, bmi, children, smoker, region):
             "smoker" : [smoker],
             "region" : [region]
         })
+   # feature engineering
+    input_data = feature_engineering(input_data)
     input_data = preprocessor.transform(input_data)
     # make prediction
     prediction = model.predict(input_data)
@@ -45,4 +55,4 @@ def predict(age, sex, bmi, children, smoker, region):
     
 
 demo = gr.Interface(fn=predict, inputs=[age, sex, bmi, children, smoker, region], outputs="text")       
-demo.launch(share=True, live=True, show_api=True)
+demo.launch(share=True, show_error=True) 
